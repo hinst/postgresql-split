@@ -48,7 +48,7 @@ func (me *App) flushOngoingHeader() {
 
 func (me *App) receiveLine(line string) {
 	if "" == me.outputFilePath {
-		me.outputFilePath = "./init.sql"
+		me.outputFilePath = "./data/init.sql"
 	}
 	if nil == me.outputFile {
 		outputFile := AssertResultError(os.Create(me.outputFilePath))
