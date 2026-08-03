@@ -24,8 +24,7 @@ func getFileName(name string) string {
 }
 
 func shrinkFilename(name string) string {
-	name, _ = strings.CutPrefix(name, "__")
-	return name
+	return strings.TrimLeft(name, "_")
 }
 
 func sanitizeFilename(name string) string {
