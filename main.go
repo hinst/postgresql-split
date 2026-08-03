@@ -22,10 +22,12 @@ func (me *App) run() {
 	}
 	defer file.Close()
 
+	const bufSize = 32 * 1024 * 1024 // 32 MB
 	scanner := bufio.NewScanner(file)
+	scanner.Buffer(make([]byte, bufSize), bufSize)
 	for scanner.Scan() {
 		line := scanner.Text()
-
+		log.Println(line)
 		// TODO: insert logic here to process each line
 	}
 }
