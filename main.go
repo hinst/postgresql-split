@@ -8,17 +8,17 @@ import (
 )
 
 type App struct {
-	inputFile string
+	inputFilePath string
 }
 
 const BUFFER_SIZE = 32 * 1024 * 1024 // 32 MB
 
 func (me *App) run() {
-	if me.inputFile == "" {
+	if me.inputFilePath == "" {
 		log.Fatal("Input file is not specified")
 	}
 
-	file, err := os.Open(me.inputFile)
+	file, err := os.Open(me.inputFilePath)
 	if err != nil {
 		log.Fatalf("Failed to open input file: %v", err)
 	}
@@ -39,6 +39,6 @@ func (me *App) run() {
 func main() {
 	flag.Parse()
 	var app = new(App)
-	app.inputFile = flag.Arg(0)
+	app.inputFilePath = flag.Arg(0)
 	app.run()
 }
