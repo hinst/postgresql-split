@@ -15,6 +15,8 @@ type App struct {
 	ongoingHeader  []string
 }
 
+const default_directory_permission = 0b111_101_101
+
 const BUFFER_SIZE = 32 * 1024 * 1024
 
 func (me *App) run() {
@@ -25,7 +27,7 @@ func (me *App) run() {
 	file := AssertResultError(os.Open(me.inputFilePath))
 	defer file.Close()
 
-	AssertError(os.MkdirAll("./data", 0755))
+	AssertError(os.MkdirAll("./data", default_directory_permission))
 	scanner := bufio.NewScanner(file)
 	scanner.Buffer(make([]byte, BUFFER_SIZE), BUFFER_SIZE)
 	for scanner.Scan() {
@@ -54,7 +56,7 @@ func (me *App) flushOngoingHeader() {
 		}
 		folder, filename := getQualifiedName(sectionName)
 		if folder != "" {
-			AssertError(os.MkdirAll("./data/"+folder, 0755))
+			AssertError(os.MkdirAll("./data/"+folder, default_directory_permission))
 			me.openFile("./data/" + folder + "/" + filename + ".sql")
 		} else {
 			me.openFile("./data/" + filename + ".sql")
