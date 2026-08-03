@@ -79,7 +79,7 @@ func (me *App) receiveLine(line string) {
 		me.outputFile = outputFile
 	}
 
-	if strings.HasPrefix(line, "-- ") {
+	if strings.HasPrefix(line, "--") {
 		me.ongoingHeader = append(me.ongoingHeader, line)
 	} else {
 		me.flushOngoingHeader()
