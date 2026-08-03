@@ -25,6 +25,7 @@ func (me *App) run() {
 	file := AssertResultError(os.Open(me.inputFilePath))
 	defer file.Close()
 
+	AssertError(os.MkdirAll("./data", 0755))
 	scanner := bufio.NewScanner(file)
 	scanner.Buffer(make([]byte, BUFFER_SIZE), BUFFER_SIZE)
 	for scanner.Scan() {
@@ -58,7 +59,7 @@ func (me *App) flushOngoingHeader() {
 		if "" == sectionName {
 			panic("Cannot find section name in TOC header")
 		}
-		filename := sanitizeFilename(sectionName)
+		filename := "./data/" + sanitizeFilename(sectionName) + ".sql"
 		me.outputFile.Close()
 		outputFile := AssertResultError(os.Create(filename))
 		me.outputFile = outputFile
