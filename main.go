@@ -59,8 +59,6 @@ func (me *App) receiveLine(line string) {
 		me.ongoingHeader = append(me.ongoingHeader, line)
 	} else {
 		me.flushOngoingHeader()
-	}
-	if me.outputFile != nil {
 		me.writeOutput(me.outputFile, line)
 	}
 }
