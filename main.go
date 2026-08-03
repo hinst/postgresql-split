@@ -20,9 +20,9 @@ func (me *App) run() {
 		log.Fatal("Input file is not specified")
 	}
 
-	file, err := os.Open(me.inputFilePath)
-	if err != nil {
-		log.Fatalf("Failed to open input file: %v", err)
+	file, fileError := os.Open(me.inputFilePath)
+	if fileError != nil {
+		log.Fatalf("Failed to open input file: %v", fileError)
 	}
 	defer file.Close()
 
@@ -32,8 +32,8 @@ func (me *App) run() {
 		line := scanner.Text()
 		me.receiveLine(line)
 	}
-	if err := scanner.Err(); err != nil {
-		log.Fatalf("Error reading input file: %v", err)
+	if scannerError := scanner.Err(); scannerError != nil {
+		log.Fatalf("Error reading input file: %v", scannerError)
 	}
 }
 
@@ -42,7 +42,11 @@ func (me *App) receiveLine(line string) {
 		me.outputFilePath = "./init.sql"
 	}
 	if nil == me.outputFile {
-
+		outputFile, err := os.Create(me.outputFilePath)
+		if err != nil {
+			log.Fatalf("Failed to open output file %s: %v", me.outputFilePath, err)
+		}
+		me.outputFile = outputFile
 	}
 }
 
