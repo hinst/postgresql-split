@@ -24,7 +24,11 @@ func getFileName(name string) string {
 }
 
 func shrinkFilename(name string) string {
-	return strings.TrimLeft(name, "_")
+	for strings.Contains(name, "__") {
+		name = strings.ReplaceAll(name, "__", "_")
+	}
+	name = strings.TrimLeft(name, "_")
+	return name
 }
 
 func sanitizeFilename(name string) string {
