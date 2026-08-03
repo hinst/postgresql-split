@@ -1,1 +1,1 @@
-go build && postgresql-split.exe
+go build && postgresql-split.exe %*
