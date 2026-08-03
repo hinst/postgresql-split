@@ -28,12 +28,14 @@ func (me *App) run() {
 	scanner.Buffer(make([]byte, BUFFER_SIZE), BUFFER_SIZE)
 	for scanner.Scan() {
 		line := scanner.Text()
-		log.Println(line)
-		// TODO: insert logic here to process each line
+		me.receiveLine(line)
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatalf("Error reading input file: %v", err)
 	}
+}
+
+func (me *App) receiveLine(line string) {
 }
 
 func main() {
