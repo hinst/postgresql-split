@@ -8,7 +8,9 @@ import (
 )
 
 type App struct {
-	inputFilePath string
+	inputFilePath  string
+	outputFilePath string
+	outputFile     *os.File
 }
 
 const BUFFER_SIZE = 32 * 1024 * 1024 // 32 MB
@@ -36,6 +38,12 @@ func (me *App) run() {
 }
 
 func (me *App) receiveLine(line string) {
+	if "" == me.outputFilePath {
+		me.outputFilePath = "./init.sql"
+	}
+	if nil == me.outputFile {
+
+	}
 }
 
 func main() {
