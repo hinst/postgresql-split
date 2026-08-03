@@ -11,6 +11,8 @@ type App struct {
 	inputFile string
 }
 
+const BUFFER_SIZE = 32 * 1024 * 1024 // 32 MB
+
 func (me *App) run() {
 	if me.inputFile == "" {
 		log.Fatal("Input file is not specified")
@@ -22,13 +24,15 @@ func (me *App) run() {
 	}
 	defer file.Close()
 
-	const bufSize = 32 * 1024 * 1024 // 32 MB
 	scanner := bufio.NewScanner(file)
-	scanner.Buffer(make([]byte, bufSize), bufSize)
+	scanner.Buffer(make([]byte, BUFFER_SIZE), BUFFER_SIZE)
 	for scanner.Scan() {
 		line := scanner.Text()
 		log.Println(line)
 		// TODO: insert logic here to process each line
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("Error reading input file: %v", err)
 	}
 }
 
