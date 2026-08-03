@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"log"
+	"os"
 )
 
 type App struct {
@@ -12,6 +14,19 @@ type App struct {
 func (me *App) run() {
 	if me.inputFile == "" {
 		log.Fatal("Input file is not specified")
+	}
+
+	file, err := os.Open(me.inputFile)
+	if err != nil {
+		log.Fatalf("Failed to open input file: %v", err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		// TODO: insert logic here to process each line
 	}
 }
 
