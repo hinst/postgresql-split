@@ -52,7 +52,7 @@ func (me *App) flushOngoingHeader() {
 		if sectionName == "" {
 			panic("Cannot find section name in TOC header")
 		}
-		folder, filename := splitSectionName(sectionName)
+		folder, filename := getQualifiedName(sectionName)
 		if folder != "" {
 			AssertError(os.MkdirAll("./data/"+folder, 0755))
 			me.openFile("./data/" + folder + "/" + filename + ".sql")
@@ -77,20 +77,6 @@ func (me *App) receiveLine(line string) {
 		me.flushOngoingHeader()
 		me.writeOutput(me.outputFile, line)
 	}
-}
-
-func splitSectionName(sectionName string) (folder string, rest string) {
-	i := 0
-	for i < len(sectionName) && ((sectionName[i] >= 'A' && sectionName[i] <= 'Z') || (sectionName[i] >= 'a' && sectionName[i] <= 'z')) {
-		i++
-	}
-	if i == 0 || i == len(sectionName) {
-		rest = sanitizeFilename(sectionName)
-	} else {
-		folder = sanitizeFilename(sectionName[:i])
-		rest = sanitizeFilename(sectionName[i:])
-	}
-	return
 }
 
 func main() {
