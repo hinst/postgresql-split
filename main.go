@@ -40,6 +40,12 @@ func (me *App) writeOutput(output *os.File, content string) {
 	AssertResultError(output.WriteString(content + "\n"))
 }
 
+func (me *App) openFile(fileName string) {
+	me.outputFile.Close()
+	me.outputFilePath = fileName
+	me.outputFile = AssertResultError(os.Create(fileName))
+}
+
 func (me *App) flushOngoingHeader() {
 	if checkContainsToc(me.ongoingHeader) {
 		sectionName := getSectionName(me.ongoingHeader)
@@ -47,9 +53,7 @@ func (me *App) flushOngoingHeader() {
 			panic("Cannot find section name in TOC header")
 		}
 		filename := "./data/" + sanitizeFilename(sectionName) + ".sql"
-		me.outputFile.Close()
-		outputFile := AssertResultError(os.Create(filename))
-		me.outputFile = outputFile
+		me.openFile(filename)
 	}
 	for _, header := range me.ongoingHeader {
 		me.writeOutput(me.outputFile, header)
@@ -59,11 +63,7 @@ func (me *App) flushOngoingHeader() {
 
 func (me *App) receiveLine(line string) {
 	if "" == me.outputFilePath {
-		me.outputFilePath = "./data/init.sql"
-	}
-	if nil == me.outputFile {
-		outputFile := AssertResultError(os.Create(me.outputFilePath))
-		me.outputFile = outputFile
+		me.openFile("./data/init.sql")
 	}
 
 	if strings.HasPrefix(line, "--") {
