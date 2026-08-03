@@ -39,27 +39,11 @@ func (me *App) writeOutput(output *os.File, content string) {
 	AssertResultError(output.WriteString(content + "\n"))
 }
 
-func (me *App) containsTocEntry() bool {
-	for _, h := range me.ongoingHeader {
-		if strings.HasPrefix(h, "-- TOC entry") {
-			return true
-		}
-	}
-	return false
-}
-
 func (me *App) flushOngoingHeader() {
-	if me.containsTocEntry() {
-		for _, header := range me.ongoingHeader {
-			if strings.HasPrefix(header, "-- Name: ") {
-				// Extract section name from "-- Name: <name>"
-				sectionName := strings.TrimPrefix(header, "-- Name: ")
-				_ = sectionName
-			} else if strings.HasPrefix(header, "-- Data for Name: ") {
-				// Extract section name from "-- Data for Name: <name>"
-				sectionName := strings.TrimPrefix(header, "-- Data for Name: ")
-				_ = sectionName
-			}
+	if checkContainsToc(me.ongoingHeader) {
+		sectionName := getSectionName(me.ongoingHeader)
+		if "" == sectionName {
+			panic("Cannot find section name in TOC header")
 		}
 	}
 	for _, header := range me.ongoingHeader {
