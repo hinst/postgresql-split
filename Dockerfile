@@ -5,7 +5,8 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 go build
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 go build
 
 FROM scratch AS runtime
 COPY --from=builder /app/postgresql-split /postgresql-split
