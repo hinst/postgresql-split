@@ -2,9 +2,16 @@ package main
 
 import (
 	"flag"
+	"log"
+	"os"
+
+	"github.com/hinst/go-gophers"
 )
 
 func main() {
+	workingDirectory := gophers.AssertResultError(os.Getwd())
+	log.Println("Working directory:", workingDirectory)
+
 	buildDir := flag.String("build", "", "Build the dump from split files in the specified folder")
 	flag.Parse()
 
