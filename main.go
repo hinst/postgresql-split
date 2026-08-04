@@ -19,8 +19,8 @@ type App struct {
 }
 
 const default_directory_permission = file_mode.USER_RWX | file_mode.GROUP_R | file_mode.GROUP_X | file_mode.OTH_R | file_mode.OTH_X
-
-const BUFFER_SIZE = 32 * 1024 * 1024
+const line_length_limit = 32 * 1024 * 1024
+const data_directory = "data"
 
 func (me *App) run() {
 	if me.inputFilePath == "" {
@@ -30,9 +30,9 @@ func (me *App) run() {
 	file := gophers.AssertResultError(os.Open(me.inputFilePath))
 	defer file.Close()
 
-	gophers.AssertError(os.MkdirAll("./data", default_directory_permission))
+	gophers.AssertError(os.MkdirAll(data_directory, default_directory_permission))
 	scanner := bufio.NewScanner(file)
-	scanner.Buffer(make([]byte, BUFFER_SIZE), BUFFER_SIZE)
+	scanner.Buffer(make([]byte, line_length_limit), line_length_limit)
 	for scanner.Scan() {
 		line := scanner.Text()
 		me.receiveLine(line)
@@ -59,9 +59,9 @@ func (me *App) flushOngoingHeader() {
 		}
 		folder, filename := getQualifiedName(sectionName)
 		if folder != "" {
-			gophers.AssertError(os.MkdirAll("./data/"+folder, default_directory_permission))
+			gophers.AssertError(os.MkdirAll(data_directory+"/"+folder, default_directory_permission))
 		}
-		filename = "./data/" + folder + gophers.IfElse(len(folder) > 0, "/", "") + filename + ".sql"
+		filename = data_directory + "/" + folder + gophers.IfElse(len(folder) > 0, "/", "") + filename + ".sql"
 		me.openFile(filename)
 	}
 	for _, header := range me.ongoingHeader {
@@ -72,7 +72,7 @@ func (me *App) flushOngoingHeader() {
 
 func (me *App) receiveLine(line string) {
 	if "" == me.outputFilePath {
-		me.openFile("./data/init.sql")
+		me.openFile(data_directory + "/init.sql")
 	}
 
 	if strings.HasPrefix(line, "--") {
