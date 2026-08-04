@@ -60,10 +60,9 @@ func (me *App) flushOngoingHeader() {
 		folder, filename := getQualifiedName(sectionName)
 		if folder != "" {
 			gophers.AssertError(os.MkdirAll("./data/"+folder, default_directory_permission))
-			me.openFile("./data/" + folder + "/" + filename + ".sql")
-		} else {
-			me.openFile("./data/" + filename + ".sql")
 		}
+		filename = "./data/" + folder + gophers.IfElse(len(folder) > 0, "/", "") + filename + ".sql"
+		me.openFile(filename)
 	}
 	for _, header := range me.ongoingHeader {
 		me.writeOutput(me.outputFile, header)
