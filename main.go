@@ -18,7 +18,7 @@ type App struct {
 	ongoingHeader  []string
 }
 
-const default_directory_permission = file_mode.OS_USER_RWX | file_mode.OS_GROUP_R | file_mode.OS_GROUP_X | file_mode.OS_OTH_R | file_mode.OS_OTH_X
+const default_directory_permission = file_mode.USER_RWX | file_mode.GROUP_R | file_mode.GROUP_X | file_mode.OTH_R | file_mode.OTH_X
 
 const BUFFER_SIZE = 32 * 1024 * 1024
 
