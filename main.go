@@ -16,7 +16,7 @@ type App struct {
 	outputFilePath string
 	outputFile     *os.File
 	ongoingHeader  []string
-	processedFiles []string
+	listFile       *os.File
 }
 
 const default_directory_permission = file_mode.USER_RWX | file_mode.GROUP_R | file_mode.GROUP_X | file_mode.OTH_R | file_mode.OTH_X
@@ -33,6 +33,10 @@ func (me *App) run() {
 
 	gophers.AssertError(os.RemoveAll(data_directory))
 	gophers.AssertError(os.MkdirAll(data_directory, default_directory_permission))
+
+	me.listFile = gophers.AssertResultError(os.Create(data_directory + "/files.txt"))
+	defer me.listFile.Close()
+
 	scanner := bufio.NewScanner(file)
 	scanner.Buffer(make([]byte, line_length_limit), line_length_limit)
 	for scanner.Scan() {
@@ -41,7 +45,6 @@ func (me *App) run() {
 	}
 	me.flushOngoingHeader()
 	gophers.AssertError(scanner.Err())
-	me.saveProcessedFiles()
 }
 
 func (me *App) writeOutput(output *os.File, content string) {
@@ -54,7 +57,9 @@ func (me *App) openFile(fileName string) {
 	}
 	me.outputFilePath = fileName
 	me.outputFile = gophers.AssertResultError(os.Create(fileName))
-	me.processedFiles = append(me.processedFiles, strings.TrimPrefix(fileName, data_directory+"/"))
+
+	relativeName := strings.TrimPrefix(fileName, data_directory+"/")
+	gophers.AssertResultError(me.listFile.WriteString(relativeName + "\n"))
 }
 
 func (me *App) flushOngoingHeader() {
@@ -74,15 +79,6 @@ func (me *App) flushOngoingHeader() {
 		me.writeOutput(me.outputFile, header)
 	}
 	me.ongoingHeader = nil
-}
-
-func (me *App) saveProcessedFiles() {
-	filePath := data_directory + "/files.txt"
-	file := gophers.AssertResultError(os.Create(filePath))
-	defer file.Close()
-	for _, f := range me.processedFiles {
-		me.writeOutput(file, f)
-	}
 }
 
 func (me *App) receiveLine(line string) {
