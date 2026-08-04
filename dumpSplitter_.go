@@ -44,6 +44,25 @@ func (me *DumpSplitter) run() {
 	}
 	me.flushOngoingHeader()
 	gophers.AssertError(scanner.Err())
+
+	me.verifyRoundTrip()
+}
+
+func (me *DumpSplitter) verifyRoundTrip() {
+	log.Println("Verifying round-trip integrity...")
+
+	tmpOutput := data_directory + "/_dump.sql"
+	var builder = &DumpBuilder{
+		dataDirectory:  data_directory,
+		outputFilePath: tmpOutput,
+	}
+	builder.run()
+	defer os.Remove(tmpOutput)
+
+	if !gophers.CheckFilesEqual(me.inputFilePath, tmpOutput) {
+		log.Fatalf("Round-trip verification FAILED: %s", me.inputFilePath)
+	}
+	log.Println("Round-trip verified.")
 }
 
 func (me *DumpSplitter) writeOutput(output *os.File, content string) {
