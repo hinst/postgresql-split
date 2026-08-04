@@ -30,6 +30,7 @@ func (me *App) run() {
 	file := gophers.AssertResultError(os.Open(me.inputFilePath))
 	defer file.Close()
 
+	gophers.AssertError(os.RemoveAll(data_directory))
 	gophers.AssertError(os.MkdirAll(data_directory, default_directory_permission))
 	scanner := bufio.NewScanner(file)
 	scanner.Buffer(make([]byte, line_length_limit), line_length_limit)
