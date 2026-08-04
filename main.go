@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"github.com/hinst/go-gophers"
 )
 
 type App struct {
@@ -24,10 +25,10 @@ func (me *App) run() {
 		log.Fatal("Input file is not specified")
 	}
 
-	file := AssertResultError(os.Open(me.inputFilePath))
+	file := gophers.AssertResultError(os.Open(me.inputFilePath))
 	defer file.Close()
 
-	AssertError(os.MkdirAll("./data", default_directory_permission))
+	gophers.AssertError(os.MkdirAll("./data", default_directory_permission))
 	scanner := bufio.NewScanner(file)
 	scanner.Buffer(make([]byte, BUFFER_SIZE), BUFFER_SIZE)
 	for scanner.Scan() {
@@ -35,17 +36,17 @@ func (me *App) run() {
 		me.receiveLine(line)
 	}
 	me.flushOngoingHeader()
-	AssertError(scanner.Err())
+	gophers.AssertError(scanner.Err())
 }
 
 func (me *App) writeOutput(output *os.File, content string) {
-	AssertResultError(output.WriteString(content + "\n"))
+	gophers.AssertResultError(output.WriteString(content + "\n"))
 }
 
 func (me *App) openFile(fileName string) {
 	me.outputFile.Close()
 	me.outputFilePath = fileName
-	me.outputFile = AssertResultError(os.Create(fileName))
+	me.outputFile = gophers.AssertResultError(os.Create(fileName))
 }
 
 func (me *App) flushOngoingHeader() {
@@ -56,7 +57,7 @@ func (me *App) flushOngoingHeader() {
 		}
 		folder, filename := getQualifiedName(sectionName)
 		if folder != "" {
-			AssertError(os.MkdirAll("./data/"+folder, default_directory_permission))
+			gophers.AssertError(os.MkdirAll("./data/"+folder, default_directory_permission))
 			me.openFile("./data/" + folder + "/" + filename + ".sql")
 		} else {
 			me.openFile("./data/" + filename + ".sql")
