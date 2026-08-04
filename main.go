@@ -16,6 +16,7 @@ type App struct {
 	outputFilePath string
 	outputFile     *os.File
 	ongoingHeader  []string
+	processedFiles []string
 }
 
 const default_directory_permission = file_mode.USER_RWX | file_mode.GROUP_R | file_mode.GROUP_X | file_mode.OTH_R | file_mode.OTH_X
@@ -40,6 +41,7 @@ func (me *App) run() {
 	}
 	me.flushOngoingHeader()
 	gophers.AssertError(scanner.Err())
+	me.saveProcessedFiles()
 }
 
 func (me *App) writeOutput(output *os.File, content string) {
@@ -47,9 +49,12 @@ func (me *App) writeOutput(output *os.File, content string) {
 }
 
 func (me *App) openFile(fileName string) {
-	me.outputFile.Close()
+	if me.outputFile != nil {
+		me.outputFile.Close()
+	}
 	me.outputFilePath = fileName
 	me.outputFile = gophers.AssertResultError(os.Create(fileName))
+	me.processedFiles = append(me.processedFiles, strings.TrimPrefix(fileName, data_directory+"/"))
 }
 
 func (me *App) flushOngoingHeader() {
@@ -69,6 +74,15 @@ func (me *App) flushOngoingHeader() {
 		me.writeOutput(me.outputFile, header)
 	}
 	me.ongoingHeader = nil
+}
+
+func (me *App) saveProcessedFiles() {
+	filePath := data_directory + "/files.txt"
+	file := gophers.AssertResultError(os.Create(filePath))
+	defer file.Close()
+	for _, f := range me.processedFiles {
+		me.writeOutput(file, f)
+	}
 }
 
 func (me *App) receiveLine(line string) {
