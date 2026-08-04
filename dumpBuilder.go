@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/hinst/go-gophers"
 )
@@ -29,7 +30,7 @@ func (me *DumpBuilder) run() {
 
 	scanner := bufio.NewScanner(listFile)
 	for scanner.Scan() {
-		fileName := scanner.Text()
+		fileName := strings.TrimSpace(scanner.Text())
 		if fileName == "" {
 			continue
 		}
